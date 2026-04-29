@@ -1,0 +1,10 @@
+[package]
+name = "yt-tracker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dotenvy = "0.15"
+quick-xml = "0.39.2"
+reqwest = { version = "0.13.3", features = ["blocking", "json"] }
+serde_json = "1"
