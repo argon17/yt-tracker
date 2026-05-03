@@ -5,6 +5,8 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1"
+env_logger = "0.11"
+log = "0.4"
 dotenvy = "0.15"
 quick-xml = "0.39.2"
 reqwest = { version = "0.13.3", features = ["blocking", "json"] }

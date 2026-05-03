@@ -5,6 +5,7 @@ mod state;
 const YT_WATCH_BASE_URL: &str = "https://youtube.com/watch?v=";
 
 use std::env;
+use log::info;
 
 struct Config {
     webhook_url: String,
@@ -21,6 +22,7 @@ impl Config {
 }
 
 fn main() -> anyhow::Result<()> {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
     dotenvy::dotenv().ok();
     let config = Config::from_env()?;
     let client = reqwest::blocking::Client::new();
@@ -31,7 +33,7 @@ fn main() -> anyhow::Result<()> {
     let new_videos = feed::parse_feed(&xml, &last_id);
 
     if new_videos.is_empty() {
-        println!("no new videos");
+        info!("no new videos");
         return Ok(());
     }
 
@@ -39,11 +41,12 @@ fn main() -> anyhow::Result<()> {
     if last_id.is_empty() {
         let latest = new_videos.last().unwrap();
         state::save_last_id(&latest.id)?;
-        println!("first run: saved latest id ({}), no notifications sent", latest.id);
+        info!("first run: saved latest id ({}), no notifications sent", latest.id);
         return Ok(());
     }
 
     for video in &new_videos {
+        info!("new video: {} {YT_WATCH_BASE_URL}{}", video.title, video.id);
         let message = format!(
             "📺 new video: {} {YT_WATCH_BASE_URL}{}",
             video.title, video.id
